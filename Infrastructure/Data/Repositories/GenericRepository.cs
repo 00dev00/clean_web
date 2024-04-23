@@ -7,16 +7,16 @@ namespace Infrastructure.Data;
 
 public class GenericRepository<T>(StoreContext storeContext) : IGenericRepository<T> where T : BaseEntity
 {
-    private StoreContext _context { get; } = storeContext;
+    private StoreContext Context { get; } = storeContext;
 
     public async Task<T> Get(int id)
     {
-        return await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+        return await Context.Set<T>().AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
     }
 
     public IQueryable<T> GetAll()
     {
-        return _context.Set<T>().AsNoTracking();
+        return Context.Set<T>().AsNoTracking();
     }
 
     public async Task<IReadOnlyList<T>> GetAllWithSpec(ISpecification<T> spec)
@@ -29,8 +29,8 @@ public class GenericRepository<T>(StoreContext storeContext) : IGenericRepositor
         return await ApplySpecification(spec).FirstOrDefaultAsync();
     }
 
-    private IQueryable<T> ApplySpecification(ISpecification<T> spec) 
+    private IQueryable<T> ApplySpecification(ISpecification<T> spec)
     {
-        return SpecificationEvaluator<T>.GetQuery(_context.Set<T>(), spec);
+        return SpecificationEvaluator<T>.GetQuery(Context.Set<T>(), spec);
     }
 }

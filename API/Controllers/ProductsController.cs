@@ -1,3 +1,5 @@
+using API.DTO;
+using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
 using Infrastructure.Data.Specifications;
@@ -5,60 +7,65 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
 {
     private readonly IGenericRepository<Product> productsRepository;
-    private readonly IGenericRepository<ProductBrand> brandsRepository;
-    private readonly IGenericRepository<ProductType> typesRepository;
+    private readonly IGenericRepository<ProductRating> ratingsRepository;
+    private readonly IGenericRepository<ProductCategory> categoriesRepository;
+    private readonly IMapper mapper;
 
     public ProductsController(
         IGenericRepository<Product> productsRepository,
-        IGenericRepository<ProductBrand> brandsRepository,
-        IGenericRepository<ProductType> typesRepository)
+        IGenericRepository<ProductRating> ratingsRepository,
+        IGenericRepository<ProductCategory> categoriesRepository,
+        IMapper mapper)
     {
         this.productsRepository = productsRepository;
-        this.brandsRepository = brandsRepository;
-        this.typesRepository = typesRepository;
+        this.ratingsRepository = ratingsRepository;
+        this.categoriesRepository = categoriesRepository;
+        this.mapper = mapper;
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Product>>> GetProducts()
+    public async Task<ActionResult<List<Product>>> GetAll()
     {
-        // var products = productsRepository.GetAll().ToList();
-        var spec = new ProductsWithTypesAndBrandsSpecification();
+        var spec = new ProductWithCategoryAndRatingSpecification();
         var products = await productsRepository.GetAllWithSpec(spec);
-        return Ok(products.Count == 0 ? [] : products);
+        var res = mapper.Map<List<Product>, List<ProductDTO>>([.. products]);
+        return Ok(res);
     }
 
     [HttpGet]
     [Route("{id}")]
-    public async Task<ActionResult<Product>> GetProduct(int id)
+    public async Task<ActionResult<Product>> Get(int id)
     {
-        var product = await productsRepository.Get(id);
+        var spec = new ProductWithCategoryAndRatingSpecification(id);
+        var product = await productsRepository.GetEntityWithSpec(spec);
 
         if (product == null)
         {
             return NotFound();
         }
 
-        return Ok(product);
+        var res = mapper.Map<Product, ProductDTO>(product);
+
+        return Ok(res);
     }
 
     [HttpGet]
-    [Route("brands")]
-    public ActionResult<List<ProductBrand>> GetBrands()
+    [Route("ratings")]
+    public ActionResult<List<ProductRating>> GetRatings()
     {
-        var brands = brandsRepository.GetAll().ToList();
-        return Ok(brands.Count == 0 ? [] : brands);
+        var ratings = ratingsRepository.GetAll().ToList();
+        return Ok(ratings.Count == 0 ? [] : ratings);
     }
 
     [HttpGet]
-    [Route("types")]
-    public ActionResult<List<ProductType>> GetTypes()
+    [Route("categories")]
+    public ActionResult<List<ProductCategory>> GetCategories()
     {
-        var types = typesRepository.GetAll().ToList();
-        return Ok(types.Count == 0 ? [] : types);
+        var categories = categoriesRepository.GetAll().ToList();
+        return Ok(categories.Count == 0 ? [] : categories);
     }
 }

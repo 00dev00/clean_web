@@ -10,10 +10,19 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
         builder.Property(p => p.Name).IsRequired().HasMaxLength(50);
         builder.Property(p => p.Description).IsRequired().HasMaxLength(100);
-        builder.Property(p => p.Price).IsRequired().HasColumnType("decimal(18, 2)");
+        builder.Property(p => p.Price).IsRequired().HasColumnType("decimal(8, 2)");
         builder.Property(p => p.PictureUrl).IsRequired();
-        builder.HasOne(p => p.ProductBrand).WithMany().HasForeignKey(p => p.ProductBrandId);
-        builder.HasOne(p => p.ProductType).WithMany().HasForeignKey(p => p.ProductTypeId);
-        builder.HasOne(p => p.ProductBrand).WithMany().HasForeignKey(p => p.ProductBrandId);
+        builder.HasOne(p => p.ProductCategory).WithMany().HasForeignKey(p => p.ProductCategoryId);
+        builder.HasOne(p => p.ProductRating).WithOne();
+    }
+}
+
+public class ProductRatingConfiguration : IEntityTypeConfiguration<ProductRating>
+{
+    public void Configure(EntityTypeBuilder<ProductRating> builder)
+    {
+        builder.Property(pr => pr.Rate).IsRequired();
+        builder.Property(pr => pr.Count).IsRequired();
+        builder.HasOne<Product>().WithOne(p => p.ProductRating).HasForeignKey((ProductRating p) => p.ProductId);
     }
 }

@@ -7,18 +7,18 @@ public class StoreContextSeed
 {
     public static async Task SeedAsync(StoreContext storeContext)
     {
-        if (!storeContext.ProductBrands.Any())
+        if (!storeContext.ProductRatings.Any())
         {
-            var brandsData = File.ReadAllText("../Infrastructure/Data/SeedData/brands.json");
-            var brands = JsonSerializer.Deserialize<List<ProductBrand>>(brandsData);
-            storeContext.ProductBrands.AddRange(brands);
+            var ratingsData = File.ReadAllText("../Infrastructure/Data/SeedData/ratings.json");
+            var ratings = JsonSerializer.Deserialize<List<ProductRating>>(ratingsData);
+            storeContext.ProductRatings.AddRange(ratings);
         }
 
-        if (!storeContext.ProductTypes.Any())
+        if (!storeContext.ProductCategories.Any())
         {
-            var typesData = File.ReadAllText("../Infrastructure/Data/SeedData/types.json");
-            var types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
-            storeContext.ProductTypes.AddRange(types);
+            var categoriesData = File.ReadAllText("../Infrastructure/Data/SeedData/categories.json");
+            var categories = JsonSerializer.Deserialize<List<ProductCategory>>(categoriesData);
+            storeContext.ProductCategories.AddRange(categories);
 
         }
 

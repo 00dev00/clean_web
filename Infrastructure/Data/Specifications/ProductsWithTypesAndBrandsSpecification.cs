@@ -3,12 +3,22 @@ using Core.Specifications;
 
 namespace Infrastructure.Data.Specifications;
 
-public class ProductsWithTypesAndBrandsSpecification : BaseSpecification<Product>
+public class ProductWithCategoryAndRatingSpecification : BaseSpecification<Product>
 {
-    public ProductsWithTypesAndBrandsSpecification()
+    public ProductWithCategoryAndRatingSpecification()
     {
-        AddInclude(x => x.ProductType);
-        AddInclude(x => x.ProductBrand);
+        AddInclude();
+    }
+
+    public ProductWithCategoryAndRatingSpecification(int id) : base(x => x.Id == id)
+    {
+        AddInclude();
+    }
+
+    private void AddInclude()
+    {
+        AddInclude(x => x.ProductCategory);
+        AddInclude(x => x.ProductRating);
     }
 
 }

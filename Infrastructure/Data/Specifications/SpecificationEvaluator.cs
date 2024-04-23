@@ -10,7 +10,8 @@ public class SpecificationEvaluator<T> where T : BaseEntity
     {
         var query = inputQuery;
 
-        if (spec.Criteria != null) {
+        if (spec.Criteria != null)
+        {
             query = query.Where(spec.Criteria);
         }
 
